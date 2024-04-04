@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import myUserRoute from "./routes/MyUserRoute";
 import { v2 as cloudinary } from "cloudinary";
 import myRestaurantRoute from "./routes/MyRestaurantRoute";
+import cookieParser from "cookie-parser";
 
 mongoose
   .connect(process.env.MONGODB_CONNECTION_STRING as string)
@@ -20,6 +21,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser()) // cookie manipulation securely using server
 
 app.get("/health", async (req: Request, res: Response) => {
   res.send({ message: "Server Health is Good" });

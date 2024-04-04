@@ -1,5 +1,5 @@
-import { FormControl, FormItem } from "@/components/ui/form";
-import { Checkbox } from "@nextui-org/react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { FormControl, FormItem, FormLabel } from "@/components/ui/form";
 import { ControllerRenderProps, FieldValues } from "react-hook-form";
 
 type Props = {
@@ -12,9 +12,9 @@ const CuisineCheckbox = ({ cuisine, field }: Props) => {
     <FormItem className="flex flex-row items-center space-x-1 space-y-0 mt-2">
       <FormControl>
         <Checkbox
-          color="success"
+          className="bg-white"
           checked={field.value.includes(cuisine)}
-          onValueChange={(checked) => {
+          onCheckedChange={(checked) => {
             if (checked) {
               field.onChange([...field.value, cuisine]);
             } else {
@@ -23,10 +23,9 @@ const CuisineCheckbox = ({ cuisine, field }: Props) => {
               );
             }
           }}
-        >
-          {cuisine}
-        </Checkbox>
+        />
       </FormControl>
+      <FormLabel className="text-sm font-normal">{cuisine}</FormLabel>
     </FormItem>
   );
 };

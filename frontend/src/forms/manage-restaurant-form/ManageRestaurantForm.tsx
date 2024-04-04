@@ -8,38 +8,47 @@ import CuisinesSection from "./CuisinesSection";
 import MenuSection from "./MenuSection";
 import ImageSection from "./ImageSection";
 import { Button } from "@nextui-org/react";
+import { Restaurant } from "@/types";
+import { useEffect } from "react";
 
-const formSchema = z.object({
-  restaurantName: z.string({ required_error: "Restaurant Name is Required" }),
-  city: z.string({ required_error: "City Name is Required" }),
-  country: z.string({ required_error: "Country Name is Required" }),
-  deliveryPrice: z.coerce.number({
-    required_error: "Delivery Price is Required",
-    invalid_type_error: "Must be a Valid Number",
-  }),
-  estimatedDeliveryTime: z.coerce.number({
-    required_error: "Estimated Delivery Time is Required",
-    invalid_type_error: "Must be a Valid Number",
-  }),
-  cuisines: z.array(z.string()).nonempty({
-    message: "Please Select at Least One item",
-  }),
-  menuItems: z.array(
-    z.object({
-      name: z.string().min(1, "Name is Required"),
-      price: z.coerce.number().min(1, "Price is Required"),
-    })
-  ),
-  imageFile: z.instanceof(File, { message: "Image is Required" }),
-});
+const formSchema = z
+  .object({
+    restaurantName: z.string({ required_error: "Restaurant Name is Required" }),
+    city: z.string({ required_error: "City Name is Required" }),
+    country: z.string({ required_error: "Country Name is Required" }),
+    deliveryPrice: z.coerce.number({
+      required_error: "Delivery Price is Required",
+      invalid_type_error: "Must be a Valid Number",
+    }),
+    estimatedDeliveryTime: z.coerce.number({
+      required_error: "Estimated Delivery Time is Required",
+      invalid_type_error: "Must be a Valid Number",
+    }),
+    cuisines: z.array(z.string()).nonempty({
+      message: "Please Select at Least One item",
+    }),
+    menuItems: z.array(
+      z.object({
+        name: z.string().min(1, "Name is Required"),
+        price: z.coerce.number().min(1, "Price is Required"),
+      })
+    ),
+    imageUrl: z.string().optional(),
+    imageFile: z.instanceof(File, { message: "Image is Required" }).optional(),
+  })
+  .refine((data) => data.imageUrl || data.imageFile, {
+    message: "Either Image URL or image file must be provided",
+    path: ["imageFile"],
+  });
 
 type RestaurantFormData = z.infer<typeof formSchema>;
 type Props = {
+  restaurant?: Restaurant;
   onSave: (restaurantFormData: FormData) => void;
   isLoading: boolean;
 };
 
-const ManageRestaurantForm = ({ onSave, isLoading }: Props) => {
+const ManageRestaurantForm = ({ onSave, isLoading, restaurant }: Props) => {
   const form = useForm<RestaurantFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,6 +56,15 @@ const ManageRestaurantForm = ({ onSave, isLoading }: Props) => {
       menuItems: [{ name: "", price: 0 }],
     },
   });
+
+  useEffect(() => {
+    if (!restaurant) {
+      return;
+    }
+
+    form.reset(restaurant);
+  }, [form, restaurant]);
+
   const onSubmit = (formDataJson: RestaurantFormData) => {
     const formData = new FormData();
 
@@ -54,10 +72,7 @@ const ManageRestaurantForm = ({ onSave, isLoading }: Props) => {
     formData.append("city", formDataJson.city);
     formData.append("country", formDataJson.country);
 
-    formData.append(
-      "deliveryPrice",
-      (formDataJson.deliveryPrice).toString()
-    );
+    formData.append("deliveryPrice", formDataJson.deliveryPrice.toString());
     formData.append(
       "estimatedDeliveryTime",
       formDataJson.estimatedDeliveryTime.toString()
@@ -67,10 +82,7 @@ const ManageRestaurantForm = ({ onSave, isLoading }: Props) => {
     });
     formDataJson.menuItems.forEach((menuItem, index) => {
       formData.append(`menuItems[${index}][name]`, menuItem.name);
-      formData.append(
-        `menuItems[${index}][price]`,
-        (menuItem.price).toString()
-      );
+      formData.append(`menuItems[${index}][price]`, menuItem.price.toString());
     });
 
     if (formDataJson.imageFile) {
