@@ -10,8 +10,16 @@ router.get(
     .trim()
     .notEmpty()
     .withMessage("City Parameter must be a valid string"),
-    RestaurantController.searchRestaurants
+  RestaurantController.searchRestaurants
 );
 
-
+router.get(
+  "/:restaurantId",
+  param("restaurantId")
+    .isString()
+    .trim()
+    .notEmpty()
+    .withMessage("RestaurantId Parameter must be a valid string"),
+  RestaurantController.getRestaurant
+);
 export default router;
