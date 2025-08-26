@@ -5,8 +5,8 @@ import User from "../models/users.model";
 declare global {
   namespace Express {
     interface Request {
-      userId: String;
-      auth0Id: String;
+      userId: string;
+      auth0Id: string;
     }
   }
 }
@@ -25,7 +25,7 @@ export const jwtParse = async (
 ) => {
   const { authorization } = req.headers;
 
-  if (!authorization || !authorization.startsWith("Bearer")) {
+  if (!authorization?.startsWith("Bearer")) {
     return res.sendStatus(401);
   }
 

@@ -36,6 +36,13 @@ const CuisineFilter = ({
         <div className="text-medium font-semibold mb-2">Filter by Cuisine</div>
         <div
           onClick={handleCuisineReset}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              handleCuisineReset();
+            }
+          }}
+          tabIndex={0}
+          role="button"
           className="text-sm font-semibold mb-2 underline cursor-pointer text-blue-500"
         >
           Reset Filters
@@ -44,10 +51,10 @@ const CuisineFilter = ({
       <div className="space-y-2 flex flex-col">
         {cuisineList
           .slice(0, isExpanded ? cuisineList.length : 7)
-          .map((cuisine, index) => {
+          .map((cuisine) => {
             const isSelected = selectedCuisines.includes(cuisine);
             return (
-              <div className="flex" key={index}>
+                <div className="flex" key={cuisine}>
                 <input
                   id={`cuisine_${cuisine}`}
                   type="checkbox"

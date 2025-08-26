@@ -1,5 +1,3 @@
-// import { Link } from "react-router-dom";
-
 import { Link } from "@nextui-org/react";
 
 type Props = {

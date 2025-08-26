@@ -68,7 +68,7 @@ const SearchPage = () => {
   }
 
   if (isLoading) {
-    <span>Loading..</span>;
+    return <span>Loading..</span>;
   }
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-5">
